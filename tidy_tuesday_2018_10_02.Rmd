@@ -1,0 +1,33 @@
+---
+title: "us_births"
+author: "Morgan Llufrio"
+date: "10/2/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+```{r}
+# view current working directory with command 'getwd()' or 'pwd'
+dat <- read_csv('data/2018-10-02/us_births_2000-2014.csv', col_names = TRUE)
+head(dat)
+```
+
+```{r}
+births <- dat %>% 
+  group_by(year) %>% 
+  summarise(births = sum(births))
+births
+
+g <- ggplot(births, aes(x = year, y = births, group = 1)) + 
+  geom_line() + 
+  geom_point() + 
+  theme_classic()  + 
+  scale_x_continuous(breaks = 2000:2014) +
+  ggtitle("US Births by Year")
+g
+``` 
+

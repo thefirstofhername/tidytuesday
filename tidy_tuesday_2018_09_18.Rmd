@@ -1,0 +1,26 @@
+---
+title: "hypoxia"
+author: "Morgan Llufrio"
+date: "9/11/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+
+```{r read_data}
+dat <- read_csv('tidytuesday/data/2018-09-11/cats_vs_dogs.csv', col_names = TRUE)
+#how do i remove the unamed column while importing the dataset? 
+```
+
+```{r veiwing_data}
+state_view <- dat %>%
+  group_by(state) %>%
+  summarise(dog_population = sum(dog_population)) %>%
+state_view  
+```
+
+
