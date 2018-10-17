@@ -10,13 +10,13 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 ```
 
-```{r}
+```{r data_read}
 # view current working directory with command 'getwd()' or 'pwd'
 dat <- read_csv('data/2018-10-02/us_births_2000-2014.csv', col_names = TRUE)
 head(dat)
 ```
 
-```{r}
+```{r data_mani}
 births <- dat %>% 
   group_by(year) %>% 
   summarise(births = sum(births))
