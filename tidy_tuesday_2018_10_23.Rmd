@@ -1,0 +1,79 @@
+---
+title: "movie_profit"
+author: "Morgan Llufrio"
+date: "10/23/2018"
+output:
+  html_document: default
+  pdf_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(lubridate)
+```
+
+```{r data_read}
+# view current working directory with command 'getwd()' or 'pwd'
+dat <- read_csv('data/2018-10-23/movie_profit.csv', col_names = TRUE)
+dat <- 
+  dat %>% select(-X1)  #removing un-named 'X1' column
+head(dat)
+```
+
+What were are the top grossing movies? 
+```{r top_grossing}
+#data_mani
+grossing <- dat %>% 
+  top_n(20, worldwide_gross) %>% 
+  select(c(movie, worldwide_gross, distributor, mpaa_rating, genre)) %>% 
+  arrange(worldwide_gross)
+grossing
+
+#data_viz
+
+#by rating
+g <- ggplot(grossing, aes(x = reorder(movie, worldwide_gross))) + 
+  geom_bar(aes(y = worldwide_gross, fill = mpaa_rating), stat = "identity") + 
+  scale_y_continuous(labels = scales::dollar, breaks = scales::pretty_breaks(n = 6), expand = c(0, 0)) + 
+  coord_flip() + 
+  labs(y = "World Wide Gross Earning", x = " ", title = "Top Grossing Movies by Genre") + 
+  sbuxthemes::theme_sbux()
+g
+
+# by genre
+g <- ggplot(grossing, aes(x = reorder(movie, worldwide_gross))) + 
+  geom_bar(aes(y = worldwide_gross, fill = genre), stat = "identity") + 
+  scale_y_continuous(labels = scales::dollar, breaks = scales::pretty_breaks(n = 6), expand = c(0, 0)) + 
+  coord_flip() + 
+  labs(y = "World Wide Gross Earning", x = " ", title = "Top Grossing Movies by Genre") + 
+  sbuxthemes::theme_sbux()
+g
+
+# by distributor
+g <- ggplot(grossing, aes(x = reorder(movie, worldwide_gross))) + 
+  geom_bar(aes(y = worldwide_gross, fill = distributor), stat = "identity") + 
+  scale_y_continuous(labels = scales::dollar, breaks = scales::pretty_breaks(n = 6), expand = c(0, 0)) + 
+  coord_flip() + 
+  labs(y = "World Wide Gross Earning", x = " ", title = "Top Grossing Movies by Genre") + 
+  sbuxthemes::theme_sbux()
+g
+
+```
+
+
+```{r movies_over_time}
+options(stringsAsFactors = FALSE)
+
+movies <- dat %>% 
+  mutate(release_date = mdy(release_date)) %>% 
+  mutate(profit_ratio = ((worldwide_gross - production_budget) / worldwide_gross))
+movies
+
+g <- ggplot(movies, aes(x = release_date, y = profit_ratio)) + 
+  geom_point(aes(color = genre)) 
+g
+
+```
+
