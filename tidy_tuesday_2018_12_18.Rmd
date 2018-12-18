@@ -1,0 +1,88 @@
+---
+title: "tidy_tuesday_2018_12_18"
+author: "Morgan Llufrio"
+date: "12/18/2018"
+output: html_document
+---
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggridges)
+```
+
+```{r}
+dat <- read_csv('data/2018-12-18/allCetaceanData.csv', col_names = TRUE)
+dat <- dat %>% select(-X1)  #removing un-named 'X1' column
+head(dat)
+
+dat
+```
+
+
+```{r}
+colnames(dat)
+```
+
+# How were most of these animal captured (by sex)?
+
+```{r}
+capture_sex <- dat %>% 
+  group_by(acquisition, sex) %>% 
+  summarise(n = n())
+capture_sex
+
+g <- ggplot(capture_sex, aes(x = acquisition, y = n, fill = sex)) + 
+  geom_bar(stat = "identity") +
+  labs(title = "How were many of these animal captured?", 
+       subtitle = "by sex",
+       x = "", 
+       y = "whale/dolphin count")
+g
+```
+
+# How were most of these animal captured (by status)?
+
+```{r}
+capture_status <- dat %>% 
+  group_by(acquisition, status) %>% 
+  summarise(n = n()) %>% 
+  mutate(percent = n/sum(n)) %>% 
+  filter(!acquisition %in% c('Miscarriage', 'Stillbirth'))
+capture_status
+
+# editing manual errors in data
+capture_status$status[capture_status$status %in% "Released?"] <- "Unknown"
+capture_status$status[capture_status$status %in% "Escaped (Found Dead)"] <- "Escaped"
+
+g <- ggplot(capture_status, aes(x = acquisition, y = percent, fill = status)) + 
+  geom_bar(stat = "identity") + 
+  labs(title = "How were many of these animal captured?", 
+       subtitle = "by current status",
+       x = "", 
+       y = "whale/dolphin count")
+g
+```
+
+# How long do most of these animal live? 
+
+```{r}
+# fixing a typo
+dat$birthYear[dat$birthYear %in% "1990s"] <- "1990"
+
+life_span <- dat %>% 
+  filter(status %in% c('Died')) %>% 
+  select(name, accuracy, birthYear, currently, statusDate, sex) %>% 
+  mutate(statusDate = format(as.Date(statusDate), "%Y")) %>% 
+  na.omit(statusDate, birthYear) %>% 
+  mutate(years_lived = as.numeric(statusDate) - as.numeric(birthYear))
+life_span
+
+g <- ggplot(life_span, aes(years_lived, sex, height = years_lived, group = sex)) +
+  geom_density_ridges(stat = "identity", fill = "light blue")
+g
+
+```
+
