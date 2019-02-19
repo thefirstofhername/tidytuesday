@@ -8,6 +8,8 @@ output: html_document
 
 
 ```{r setup, include=FALSE}
+# git push origin
+# git pull upstream master 
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(ggridges)
