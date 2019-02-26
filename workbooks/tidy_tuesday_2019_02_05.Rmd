@@ -1,0 +1,63 @@
+---
+title: "tidy_tuesday_2019_02_05"
+author: "Morgan Llufrio"
+date: "02/05/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+# git push origin
+# git pull upstream master 
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggridges)
+library(zoo)
+```
+
+```{r data}
+state_hpi <- readr::read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-02-05/state_hpi.csv")
+
+# if we read in the data without specificying the default type as double, than it assumes it is a boolean for some reason
+mortgage_rates <- readr::read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-02-05/mortgage.csv", col_types = cols(date = col_date(), .default = col_double()))
+
+recession_dates <- readr::read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-02-05/recessions.csv")
+
+```
+
+
+```{r}
+hpi_avg <- state_hpi %>% 
+  mutate(avg_hpi = rollmean(x = price_index, k = 10, fill = NA, align = "right")) %>% 
+  mutate(date = as.yearmon(paste(year, month), "%Y %m"))
+hpi_avg
+
+g <- ggplot(hpi_avg, aes(x = date, y = avg_hpi)) +
+  geom_point(na.rm = TRUE) +
+  geom_smooth()
+g
+```
+
+```{r}
+x.Date <- as.Date(paste(2004, rep(1:4, 4:1), sample(1:28, 10), sep = "-"))
+
+x <- zoo(rnorm(12), x.Date)
+
+rollmean(x = x, k = 2)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
