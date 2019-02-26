@@ -13,5 +13,52 @@ library(tidyverse)
 ```{r}
 trains_raw <- readr::read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-02-26/full_trains.csv")
 small_trains <- readr::read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-02-26/small_trains.csv") 
+
+trains_raw
+small_trains
 ```
+
+```{r}
+trains_canceled <- trains_raw %>% 
+  group_by(departure_station) %>% 
+  summarise(sum_of_canceled_trains = sum(num_of_canceled_trains)) %>% 
+  top_n(wt = sum_of_canceled_trains, 20)
+  #mutate(num_of_canceled_trains = sum(num_of_canceled_trains))
+  #arrange(desc(num_of_canceled_trains)) %>% 
+  #head(100)
+
+g <- ggplot(trains_canceled, aes(x = reorder(departure_station, sum_of_canceled_trains), y = sum_of_canceled_trains)) +
+  geom_bar(fill = '#001e93', stat = "identity") + #001e93 #ffffff #ef2637
+  coord_flip() +
+  labs(x = "Departure Station", y = " ", title = "French Train Stations with the Most Cancelations") +
+  geom_text(aes(label = sum_of_canceled_trains), colour = '#ffffff', position = position_stack(vjust = .75))# +
+  #theme(axis.text.x = element_blank(), 
+        #panel.background = element_rect(fill = '#001e93'), 
+        #axis.line = element_line(size = 0.5, linetype = "solid", colour = '#ef2637'),
+        #panel.border = element_line(size = 0.5, colour = '#ef2637'),
+        #panel.grid.major = element_line(size = 0.5, colour = '#ef2637'),
+        #panel.grid.minor = element_line(size = 0.5, colour = '#ef2637'))
+g
+```
+
+```{r}
+trips_canceled <- trains_raw %>% 
+  filter(year != 2018) %>% 
+  mutate(trip_combinations = paste(departure_station, arrival_station, sep = " - ")) %>% 
+  group_by(trip_combinations) %>% 
+  summarise(sum_of_canceled_trains = sum(num_of_canceled_trains)) %>% 
+  top_n(wt = sum_of_canceled_trains, 20)
+
+g <- ggplot(trips_canceled, aes(x = reorder(trip_combinations, sum_of_canceled_trains), y = sum_of_canceled_trains)) +
+  geom_bar(fill = '#ef2637', stat = "identity") +
+  coord_flip() +
+  labs(x = "Departure Station - Arrival Station", y = "", 
+       title = "Most Commonly Canceled Trip Combinations", 
+       subtitle = "Excluding year 2018 due to train workers strike") +
+  geom_text(aes(label = sum_of_canceled_trains), colour = 'black', position = position_stack(vjust = .75)) +
+  theme_minimal() +
+  theme(axis.text.x = element_blank())
+g
+```
+
 
