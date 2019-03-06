@@ -1,0 +1,44 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(scales)
+```
+
+```{r}
+#pulling in data
+jobs_gender <- readr::read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-03-05/jobs_gender.csv")
+earnings_female <- readr::read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-03-05/earnings_female.csv") 
+employed_gender <- readr::read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-03-05/employed_gender.csv") 
+```
+
+```{r}
+#quick easy visuals to understand the data better:
+
+#first, make percents in proper format
+earnings_female <- earnings_female %>% mutate(percent = percent/100)
+
+#viz and group by age group
+ggplot(earnings_female, aes(x = Year, y = percent)) + 
+  geom_line(aes(color = group)) +
+  scale_y_continuous(labels = scales::percent_format()) +
+  theme_bw()
+```
+
+```{r}
+#visual of total earnings for male and females
+jobs_all <- jobs_gender %>%
+  gather(key = 'gender', value = 'earnings', total_earnings_male, total_earnings_female)
+
+ggplot(jobs_all, aes(x = gender, y = earnings)) +
+  geom_violin() + 
+  scale_y_continuous(labels = scales::dollar_format()) +
+  geom_boxplot(width = 0.1, color = "seagreen") +
+  #stat_summary(fun.y = "median", geom = "point", shape = 2, size = 3, color = "seagreen") +
+  theme_bw() +
+  facet_wrap(~year)
+```
+
