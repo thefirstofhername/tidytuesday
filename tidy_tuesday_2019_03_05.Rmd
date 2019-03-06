@@ -42,3 +42,21 @@ ggplot(jobs_all, aes(x = gender, y = earnings)) +
   facet_wrap(~year)
 ```
 
+```{r}
+#wrapping the tex to fit the ggplot
+jobs_gender <- jobs_gender %>% mutate(major_category = str_wrap(major_category, 10))
+
+ggplot(jobs_gender, aes(x = total_earnings_male, y = total_earnings_female)) +
+  geom_point() +
+  geom_smooth() +
+  scale_y_continuous(labels = scales::dollar_format(), limits = c(20000, 180000)) +
+  scale_x_continuous(labels = scales::dollar_format(), limits = c(20000, 180000)) +
+  facet_grid(cols = vars(major_category)) +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+  labs(x = "Male Total Earnings", 
+       y = "Female Total Earnings", 
+       title = "Female versus Male Total Earnings", 
+       subtitle = "By Year and Career Feild")
+  #theme_bw(axis.text.x = element_text(angle = 90))
+```
+
