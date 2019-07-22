@@ -1,0 +1,44 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+ 
+
+```{r}
+library(readxl)
+# reading in revocation list from sarag
+rev_list <- read_excel(here::here("data","all_rev_list_fy19.xlsx")) %>% janitor::clean_names()
+
+
+#reading in each of the assessment data frames
+amer_ra_assessment <- read_excel(here::here("data", "amer_ra_assessment.xlsx")) %>% janitor::clean_names()
+
+amer_sod_assessment <- read_excel(here::here("data", "amer_sod_assessment.xlsx")) %>% janitor::clean_names()
+
+emea_ra_assessment <- read_excel(here::here("data", "emea_ra_assessment.xlsx")) %>% janitor::clean_names()
+
+emea_sod_assessment <- read_excel(here::here("data", "emea_sod_assessment.xlsx")) %>% janitor::clean_names()
+
+```
+
+```{r}
+library(tidyverse)
+# combining the assessment data frames
+assessment_ids <- rbind(amer_ra_assessment, amer_sod_assessment, emea_ra_assessment, emea_sod_assessment)
+
+# ensuring cap sensativity is not an issue
+assessment_ids <- assessment_ids %>% mutate(id = toupper(id))
+rev_list <- rev_list %>% mutate(id = toupper(id))
+
+# pulling together ids that are mutally exclusive (disjoint) ids
+non_overlapping_ids <- anti_join(assessment_ids, rev_list, by = "id")
+
+# pulling together the overlapping ids
+overlapping_ids <- inner_join(assessment_ids, rev_list, by = "id")
+
+```
+
+```{r}
+why is this not working ) :
+```
+
