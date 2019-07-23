@@ -1,4 +1,5 @@
 ![](static/tt_logo.png)
+example 
 
 ## A weekly social data project in R
 
