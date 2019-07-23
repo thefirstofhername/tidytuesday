@@ -2,6 +2,18 @@
 title: "R Notebook"
 output: html_notebook
 ---
+To work with git on branch: 
+1. git branch -b temp
+2. *make changes*
+3. *save*
+4. git status
+5. git add .
+6. git commit -m "<commit details>"
+7. git push origin temp
+8. *got to firstofhername git page repo
+9. wait for commit to show up
+10. merge commit?
+11. delete branch?
 
 ```{r}
 # git push origin
