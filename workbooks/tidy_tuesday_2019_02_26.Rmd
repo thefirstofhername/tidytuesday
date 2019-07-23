@@ -2,6 +2,11 @@
 title: "R Notebook"
 output: html_notebook
 ---
+To update my master: 
+1. git checkout master
+2. git pull origin master
+3. (then check back out working branch, such as temp)
+
 To work with git on branch: 
 1. git branch (if not on temp, create and check out temp branch)
 2. *make changes*
